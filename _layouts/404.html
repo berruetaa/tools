@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada</title>
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | relative_url }}">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 4em;
+            color: #ff6f61;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .background-404 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20em;
+            color: rgba(200, 200, 200, 0.5);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-404">404</div>
+    <div class="container">
+        <h1>¡Oops! ¡Te perdiste!</h1>
+        <p>Parece que te has aventurado en territorio desconocido. 🌍</p>
+        <p>No te preocupes, hasta los mejores exploradores se pierden a veces.</p>
+        <p>Aquí tienes algunas opciones:</p>
+        <a class="button" href="{{ '/' | relative_url }}">Regresa a casa</a>
+        <p>Si crees que esto es un complot de los gatos para dominar el mundo, ¡puedes <a href="mailto:contacto@berrueta.xyz">contactarme</a> para investigar más!</p>
+        <p>¡Buena suerte en tu búsqueda! 🚀</p>
+    </div>
+</body>
+</html>
