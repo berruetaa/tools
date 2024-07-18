@@ -25,8 +25,8 @@ title: Generador de BibTeX
     <label for="pages">Páginas:</label>
     <input type="text" id="pages" name="pages">
 
-    <label for="doi">DOI:</label>
-    <input type="text" id="doi" name="doi">
+    <label for="doi">URL:</label>
+    <input type="text" id="url" name="url">
 
     <button type="submit">Generar BibTeX</button>
 </form>
@@ -48,7 +48,7 @@ title: Generador de BibTeX
         const volume = document.getElementById('volume').value.trim();
         const number = document.getElementById('number').value.trim();
         const pages = document.getElementById('pages').value.trim();
-        const doi = document.getElementById('doi').value.trim();
+        const url = document.getElementById('url').value.trim();
 
         if (!author || !title || !year) {
             alert("Por favor complete los campos obligatorios.");
@@ -68,7 +68,7 @@ title: Generador de BibTeX
   volume = {${volume}},
   number = {${number}},
   pages = {${pages}},
-  doi = {${doi}}
+  url = {${url}}
 }`;
 
         const resultDiv = document.getElementById('result');
