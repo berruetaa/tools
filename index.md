@@ -1,10 +1,15 @@
+---
+layout=default
+title=Herramientas
+---
+
 # Herramientas Útiles
 
 Bienvenido a nuestra colección de herramientas. Aquí encontrarás una variedad de herramientas diseñadas para facilitar diferentes tareas. Haz clic en los enlaces a continuación para explorar cada herramienta.
 
 ## Herramienta 1
 
-Bibtex. [Enlace a la herramienta 1](#)
+Generador de entrada Bibtex. [Entrar](/BibTex)
 
 ## Herramienta 2
 
