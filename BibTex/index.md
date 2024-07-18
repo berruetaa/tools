@@ -37,14 +37,24 @@ title: Generador de BibTeX
     document.getElementById('bibtexForm').addEventListener('submit', function(event) {
         event.preventDefault();
         
-        const author = document.getElementById('author').value;
-        const title = document.getElementById('title').value;
-        const journal = document.getElementById('journal').value;
-        const year = document.getElementById('year').value;
-        const volume = document.getElementById('volume').value;
-        const number = document.getElementById('number').value;
-        const pages = document.getElementById('pages').value;
-        const doi = document.getElementById('doi').value;
+        const author = document.getElementById('author').value.trim();
+        const title = document.getElementById('title').value.trim();
+        const journal = document.getElementById('journal').value.trim();
+        const year = document.getElementById('year').value.trim();
+        const volume = document.getElementById('volume').value.trim();
+        const number = document.getElementById('number').value.trim();
+        const pages = document.getElementById('pages').value.trim();
+        const doi = document.getElementById('doi').value.trim();
+
+        if (!author || !title || !year) {
+            alert("Por favor complete los campos obligatorios.");
+            return;
+        }
+
+        if (isNaN(year)) {
+            alert("El año debe ser un número.");
+            return;
+        }
 
         let bibtex = `@article{${author.split(' ').join('')}${year},
   author = {${author}},
@@ -60,3 +70,97 @@ title: Generador de BibTeX
         document.getElementById('result').textContent = bibtex;
     });
 </script>
+
+<style>
+/* Estilos básicos para el sitio web */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* Estilos adicionales para el formulario y el resultado */
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.result {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+}
+</style>
