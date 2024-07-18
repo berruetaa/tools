@@ -31,7 +31,11 @@ title: Generador de BibTeX
     <button type="submit">Generar BibTeX</button>
 </form>
 
-<div class="result" id="result"></div>
+<div class="result" id="result">
+    <!-- Aquí se mostrará el BibTeX generado -->
+</div>
+
+<button id="copyButton" style="display: none;">Copiar al portapapeles</button>
 
 <script>
     document.getElementById('bibtexForm').addEventListener('submit', function(event) {
@@ -67,7 +71,20 @@ title: Generador de BibTeX
   doi = {${doi}}
 }`;
 
-        document.getElementById('result').textContent = bibtex;
+        const resultDiv = document.getElementById('result');
+        resultDiv.textContent = bibtex;
+
+        // Mostrar el botón para copiar
+        document.getElementById('copyButton').style.display = 'block';
+    });
+
+    document.getElementById('copyButton').addEventListener('click', function() {
+        const resultText = document.getElementById('result').textContent;
+        navigator.clipboard.writeText(resultText).then(function() {
+            alert('BibTeX copiado al portapapeles!');
+        }, function(err) {
+            console.error('Error al copiar al portapapeles:', err);
+        });
     });
 </script>
 
@@ -80,6 +97,7 @@ body {
     padding: 0;
     color: #333;
     background-color: #f4f4f4;
+    padding-bottom: 60px; /* Ajuste para tener en cuenta el footer */
 }
 
 header {
@@ -162,5 +180,20 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
+}
+
+#copyButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#copyButton:hover {
+    background-color: #218838;
 }
 </style>
