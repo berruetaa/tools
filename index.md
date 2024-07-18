@@ -1,6 +1,6 @@
 ---
-layout=default
-title=Herramientas
+layout: default
+title: Herramientas
 ---
 
 # Herramientas Útiles
