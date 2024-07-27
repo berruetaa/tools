@@ -31,8 +31,16 @@
         });
 
         function fetchStories(username) {
-            fetch(`https://instastoryviewer.app/api/stories/${username}`)
-                .then(response => response.json())
+            // Usar un proxy o servicio que permita hacer solicitudes a la API de Instagram
+            var url = `https://api.storiesig.com/stories/${username}`; // Ejemplo de URL de API
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     displayStories(data);
                 })
