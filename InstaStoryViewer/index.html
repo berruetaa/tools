@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor de Historias de Instagram Anónimo</title>
+    <style>
+        /* Añade tus estilos aquí */
+        .story {
+            margin: 10px 0;
+        }
+        .story img, .story video {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ver Historias de Instagram Anónimamente</h1>
+    <form id="instagramViewerForm">
+        <label for="username">Nombre de usuario de Instagram:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Ver Historias</button>
+    </form>
+    <div id="stories"></div>
+
+    <script>
+        document.getElementById('instagramViewerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var username = document.getElementById('username').value;
+            fetchStories(username);
+        });
+
+        function fetchStories(username) {
+            fetch(`https://instastoryviewer.app/api/stories/${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayStories(data);
+                })
+                .catch(error => {
+                    console.error('Error al obtener las historias:', error);
+                });
+        }
+
+        function displayStories(stories) {
+            var storiesDiv = document.getElementById('stories');
+            storiesDiv.innerHTML = ''; // Limpiar contenido anterior
+
+            stories.forEach(story => {
+                var storyElement = document.createElement('div');
+                storyElement.classList.add('story');
+                if (story.type === 'image') {
+                    var img = document.createElement('img');
+                    img.src = story.url;
+                    storyElement.appendChild(img);
+                } else if (story.type === 'video') {
+                    var video = document.createElement('video');
+                    video.src = story.url;
+                    video.controls = true;
+                    storyElement.appendChild(video);
+                }
+                storiesDiv.appendChild(storyElement);
+            });
+        }
+    </script>
+</body>
+</html>
