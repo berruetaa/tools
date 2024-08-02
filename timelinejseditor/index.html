@@ -129,8 +129,12 @@
                     <textarea id="event-text-content-${index}" name="event-text-content-${index}" placeholder="Ingrese el contenido del texto aquí..."></textarea>
                 </div>
                 <div class="field">
-                    <label for="event-text-source-${index}">Fuente del Texto</label>
-                    <input type="text" id="event-text-source-${index}" name="event-text-source-${index}" value="">
+                    <label for="event-text-source-url-${index}">URL de la Fuente</label>
+                    <input type="text" id="event-text-source-url-${index}" name="event-text-source-url-${index}" value="">
+                </div>
+                <div class="field">
+                    <label for="event-text-source-text-${index}">Texto de la Fuente</label>
+                    <input type="text" id="event-text-source-text-${index}" name="event-text-source-text-${index}" value="">
                 </div>
             `;
             container.appendChild(eventDiv);
@@ -160,7 +164,7 @@
                     },
                     text: {
                         headline: document.getElementById(`event-text-headline-${index}`).value,
-                        text: `<p>${document.getElementById(`event-text-content-${index}`).value}</p> <small><i>Fuente: ${document.getElementById(`event-text-source-${index}`).value}</i></small>`
+                        text: `<p>${document.getElementById(`event-text-content-${index}`).value}</p> <small><i>Fuente: <a href="${document.getElementById(`event-text-source-url-${index}`).value}" target="_blank">${document.getElementById(`event-text-source-text-${index}`).value}</a></i></small>`
                     }
                 }))
             };
@@ -225,13 +229,14 @@
                     document.getElementById(`event-media-credit-${index}`).value = event.media.credit || '';
                     document.getElementById(`event-start_date-year-${index}`).value = event.start_date.year || '';
                     document.getElementById(`event-text-headline-${index}`).value = event.text.headline || '';
-                    
+
                     // Extrae el contenido y la fuente del texto
                     const textContent = event.text.text.match(/<p>(.*?)<\/p>/);
-                    const textSource = event.text.text.match(/<small><i>Fuente: (.*?)<\/i><\/small>/);
+                    const textSource = event.text.text.match(/<small><i>Fuente: <a href="(.*?)" target="_blank">(.*?)<\/a><\/i><\/small>/);
 
                     document.getElementById(`event-text-content-${index}`).value = textContent ? textContent[1] : '';
-                    document.getElementById(`event-text-source-${index}`).value = textSource ? textSource[1] : '';
+                    document.getElementById(`event-text-source-url-${index}`).value = textSource ? textSource[1] : '';
+                    document.getElementById(`event-text-source-text-${index}`).value = textSource ? textSource[2] : '';
                 });
             }
         }
