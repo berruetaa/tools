@@ -43,6 +43,16 @@
             border: 1px solid #ddd;
             padding: 15px;
             margin-bottom: 15px;
+            position: relative;
+        }
+        .remove-event {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+        }
+        .remove-event:hover {
+            background-color: #c82333;
         }
         .add-event {
             margin-bottom: 20px;
@@ -102,7 +112,9 @@
             const index = eventCount++;
             const eventDiv = document.createElement('div');
             eventDiv.classList.add('event-group');
+            eventDiv.id = `event-${index}`;
             eventDiv.innerHTML = `
+                <button type="button" class="remove-event" onclick="removeEvent(${index})">Eliminar</button>
                 <h3>Evento ${index + 1}</h3>
                 <div class="field">
                     <label for="event-media-url-${index}">URL de la Imagen</label>
@@ -138,6 +150,29 @@
                 </div>
             `;
             container.appendChild(eventDiv);
+        }
+
+        function removeEvent(index) {
+            const eventDiv = document.getElementById(`event-${index}`);
+            eventDiv.parentNode.removeChild(eventDiv);
+            // Reordenar los índices de los eventos restantes
+            eventCount--;
+            const eventsContainer = document.getElementById('events-container');
+            const events = eventsContainer.getElementsByClassName('event-group');
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                event.id = `event-${i}`;
+                const inputs = event.getElementsByTagName('input');
+                for (let j = 0; j < inputs.length; j++) {
+                    inputs[j].id = inputs[j].id.replace(/\d+$/, i);
+                    inputs[j].name = inputs[j].name.replace(/\d+$/, i);
+                }
+                const textareas = event.getElementsByTagName('textarea');
+                for (let j = 0; j < textareas.length; j++) {
+                    textareas[j].id = textareas[j].id.replace(/\d+$/, i);
+                    textareas[j].name = textareas[j].name.replace(/\d+$/, i);
+                }
+            }
         }
 
         function generateJSON() {
@@ -180,50 +215,43 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = fileName;
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
         function copyToClipboard() {
             const jsonString = document.getElementById('jsonOutput').textContent;
             navigator.clipboard.writeText(jsonString).then(() => {
-                alert('JSON copiado al portapapeles!');
-            }).catch(err => {
-                alert('Error al copiar al portapapeles: ' + err);
+                alert('JSON copiado al portapapeles');
             });
         }
 
         function loadJSON(event) {
             const file = event.target.files[0];
-            if (file && file.type === 'application/json') {
+            if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const json = JSON.parse(e.target.result);
-                        populateForm(json);
-                    } catch (error) {
-                        alert('Error al parsear el JSON: ' + error.message);
-                    }
+                reader.onload = function (e) {
+                    const data = JSON.parse(e.target.result);
+                    populateForm(data);
                 };
                 reader.readAsText(file);
-            } else {
-                alert('Por favor, seleccione un archivo JSON.');
             }
         }
 
-        function populateForm(json) {
-            document.getElementById('title-headline').value = json.title.text.headline;
-            document.getElementById('title-text').value = json.title.text.text.replace(/<\/?p>/g, '');
-
-            // Limpia los eventos existentes
+        function populateForm(data) {
+            // Limpiar eventos existentes
             document.getElementById('events-container').innerHTML = '';
             eventCount = 0;
 
-            if (json.events) {
-                json.events.forEach((event, index) => {
-                    addEvent();
+            if (data.title) {
+                document.getElementById('title-headline').value = data.title.text.headline || '';
+                document.getElementById('title-text').value = data.title.text.text.replace(/<\/?p>/g, '').trim() || '';
+            }
+
+            if (data.events) {
+                data.events.forEach((event, index) => {
+                    addEvent(); // Agrega un nuevo evento
+                    const eventDiv = document.getElementById(`event-${index}`);
                     document.getElementById(`event-media-url-${index}`).value = event.media.url || '';
                     document.getElementById(`event-media-caption-${index}`).value = event.media.caption || '';
                     document.getElementById(`event-media-credit-${index}`).value = event.media.credit || '';
