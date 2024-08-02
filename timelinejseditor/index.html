@@ -34,6 +34,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            margin-right: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -45,6 +46,9 @@
         }
         .add-event {
             margin-bottom: 20px;
+        }
+        .btn-container {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -59,7 +63,7 @@
             </div>
             <div class="field">
                 <label for="title-text">Texto del Título</label>
-                <textarea id="title-text" name="title-text"></textarea>
+                <textarea id="title-text" name="title-text" placeholder="Ingrese el texto aquí..."></textarea>
             </div>
 
             <h2>Eventos</h2>
@@ -75,6 +79,12 @@
 
         <h2>JSON Resultante</h2>
         <pre id="jsonOutput"></pre>
+
+        <div class="btn-container">
+            <input type="text" id="fileName" placeholder="Nombre del archivo" value="nombre.json">
+            <button type="button" onclick="downloadJSON()">Descargar JSON</button>
+            <button type="button" onclick="copyToClipboard()">Copiar al portapapeles</button>
+        </div>
     </div>
 
     <script>
@@ -108,8 +118,12 @@
                     <input type="text" id="event-text-headline-${index}" name="event-text-headline-${index}" value="">
                 </div>
                 <div class="field">
-                    <label for="event-text-text-${index}">Texto</label>
-                    <textarea id="event-text-text-${index}" name="event-text-text-${index}"></textarea>
+                    <label for="event-text-content-${index}">Contenido del Texto</label>
+                    <textarea id="event-text-content-${index}" name="event-text-content-${index}" placeholder="Ingrese el contenido del texto aquí..."></textarea>
+                </div>
+                <div class="field">
+                    <label for="event-text-source-${index}">Fuente del Texto</label>
+                    <input type="text" id="event-text-source-${index}" name="event-text-source-${index}" value="">
                 </div>
             `;
             container.appendChild(eventDiv);
@@ -125,7 +139,7 @@
                     },
                     text: {
                         headline: document.getElementById('title-headline').value,
-                        text: document.getElementById('title-text').value
+                        text: `<p>${document.getElementById('title-text').value}</p>`
                     }
                 },
                 events: Array.from({ length: eventCount }).map((_, index) => ({
@@ -139,11 +153,35 @@
                     },
                     text: {
                         headline: document.getElementById(`event-text-headline-${index}`).value,
-                        text: document.getElementById(`event-text-text-${index}`).value
+                        text: `<p>${document.getElementById(`event-text-content-${index}`).value}</p> <small><i>Fuente: ${document.getElementById(`event-text-source-${index}`).value}</i></small>`
                     }
                 }))
             };
-            document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
+            const jsonString = JSON.stringify(json, null, 2);
+            document.getElementById('jsonOutput').textContent = jsonString;
+        }
+
+        function downloadJSON() {
+            const jsonString = document.getElementById('jsonOutput').textContent;
+            const fileName = document.getElementById('fileName').value || 'nombre.json';
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyToClipboard() {
+            const jsonString = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(jsonString).then(() => {
+                alert('JSON copiado al portapapeles!');
+            }).catch(err => {
+                alert('Error al copiar al portapapeles: ' + err);
+            });
         }
     </script>
 </body>
