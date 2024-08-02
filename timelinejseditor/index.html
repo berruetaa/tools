@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor de JSON Complejo version 1</title>
+    <title>Editor de JSON Complejo version 1.1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
+
         .container {
             max-width: 1000px;
             margin: auto;
         }
+
         .field {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
         }
-        input[type="text"], textarea {
+
+        input[type="text"],
+        textarea {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
         }
+
         textarea {
             height: 120px;
         }
+
         button {
             padding: 10px 15px;
             background-color: #007bff;
@@ -36,35 +44,43 @@
             cursor: pointer;
             margin-right: 10px;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .event-group {
             border: 1px solid #ddd;
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
         }
+
         .remove-event {
             position: absolute;
             top: 10px;
             right: 10px;
             background-color: #dc3545;
         }
+
         .remove-event:hover {
             background-color: #c82333;
         }
+
         .add-event {
             margin-bottom: 20px;
         }
+
         .btn-container {
             margin-top: 20px;
         }
+
         #fileInput {
             margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Editor de JSON Complejo</h1>
@@ -105,6 +121,22 @@
     </div>
 
     <script>
+        // Objeto para almacenar el JSON generado
+        let json = {
+            title: {
+                media: {
+                    url: "",
+                    caption: "",
+                    credit: ""
+                },
+                text: {
+                    headline: "",
+                    text: ""
+                }
+            },
+            events: []
+        };
+
         let eventCount = 0;
 
         function addEvent() {
@@ -150,72 +182,105 @@
                 </div>
             `;
             container.appendChild(eventDiv);
+
+            // Añadir el nuevo evento al JSON
+            json.events.push({
+                media: {
+                    url: "",
+                    caption: "",
+                    credit: ""
+                },
+                start_date: {
+                    year: ""
+                },
+                text: {
+                    headline: "",
+                    text: ""
+                }
+            });
         }
 
         function removeEvent(index) {
-    const eventDiv = document.getElementById(`event-${index}`);
-    if (eventDiv) {
-        eventDiv.remove();
+            // Eliminar el evento del objeto JSON
+            json.events.splice(index, 1);
 
-        // Actualizar el contador de eventos
-        eventCount--;
+            // Actualizar el contador de eventos
+            eventCount--;
 
-        // Reordenar los eventos restantes
-        const eventsContainer = document.getElementById('events-container');
-        const events = Array.from(eventsContainer.children); // Convertir NodeList a array
-
-        // Iterar en orden inverso para mantener la indexación correcta
-        for (let i = events.length - 1; i >= index; i--) {
-            const currentEvent = events[i];
-            const newIndex = i - 1; // Nueva indexación después de eliminar
-
-            // Actualizar el ID del evento
-            currentEvent.id = `event-${newIndex}`;
-
-            // Actualizar los IDs y nombres de los inputs y textareas
-            const inputs = currentEvent.getElementsByTagName('input');
-            for (let input of inputs) {
-                input.id = input.id.replace(/\d+$/, newIndex);
-                input.name = input.name.replace(/\d+$/, newIndex);
-            }
-            const textareas = currentEvent.getElementsByTagName('textarea');
-            for (let textarea of textareas) {
-                textarea.id = textarea.id.replace(/\d+$/, newIndex);
-                textarea.name = textarea.name.replace(/\d+$/, newIndex);
-            }
+            // Recargar el formulario con los eventos actualizados
+            reloadEvents();
         }
-    }
-}
 
+        function reloadEvents() {
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+
+            json.events.forEach((event, index) => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event-group');
+                eventDiv.id = `event-${index}`;
+                eventDiv.innerHTML = `
+                    <button type="button" class="remove-event" onclick="removeEvent(${index})">Eliminar</button>
+                    <h3>Evento ${index + 1}</h3>
+                    <div class="field">
+                        <label for="event-media-url-${index}">URL de la Imagen</label>
+                        <input type="text" id="event-media-url-${index}" name="event-media-url-${index}" value="${event.media.url}">
+                    </div>
+                    <div class="field">
+                        <label for="event-media-caption-${index}">Texto de la Imagen</label>
+                        <input type="text" id="event-media-caption-${index}" name="event-media-caption-${index}" value="${event.media.caption}">
+                    </div>
+                    <div class="field">
+                        <label for="event-media-credit-${index}">Crédito de la Imagen</label>
+                        <input type="text" id="event-media-credit-${index}" name="event-media-credit-${index}" value="${event.media.credit}">
+                    </div>
+                    <div class="field">
+                        <label for="event-start_date-year-${index}">Año de Inicio</label>
+                        <input type="text" id="event-start_date-year-${index}" name="event-start_date-year-${index}" value="${event.start_date.year}">
+                    </div>
+                    <div class="field">
+                        <label for="event-text-headline-${index}">Titular</label>
+                        <input type="text" id="event-text-headline-${index}" name="event-text-headline-${index}" value="${event.text.headline}">
+                    </div>
+                    <div class="field">
+                        <label for="event-text-content-${index}">Contenido del Texto</label>
+                        <textarea id="event-text-content-${index}" name="event-text-content-${index}" placeholder="Ingrese el contenido del texto aquí...">${event.text.text.replace(/<p>|<\/p>/g, '')}</textarea>
+                    </div>
+                    <div class="field">
+                        <label for="event-text-source-url-${index}">URL de la Fuente</label>
+                        <input type="text" id="event-text-source-url-${index}" name="event-text-source-url-${index}" value="${event.text.sourceUrl}">
+                    </div>
+                    <div class="field">
+                        <label for="event-text-source-text-${index}">Texto de la Fuente</label>
+                        <input type="text" id="event-text-source-text-${index}" name="event-text-source-text-${index}" value="${event.text.sourceText}">
+                    </div>
+                `;
+                container.appendChild(eventDiv);
+            });
+        }
 
         function generateJSON() {
-            const json = {
-                title: {
-                    media: {
-                        url: "",
-                        caption: "",
-                        credit: ""
-                    },
-                    text: {
-                        headline: document.getElementById('title-headline').value,
-                        text: `<p>${document.getElementById('title-text').value}</p>`
-                    }
+            // Actualizar los datos de los eventos en el JSON
+            json.title.text.headline = document.getElementById('title-headline').value;
+            json.title.text.text = `<p>${document.getElementById('title-text').value}</p>`;
+
+            json.events = json.events.map((event, index) => ({
+                media: {
+                    url: document.getElementById(`event-media-url-${index}`).value,
+                    caption: document.getElementById(`event-media-caption-${index}`).value,
+                    credit: document.getElementById(`event-media-credit-${index}`).value
                 },
-                events: Array.from({ length: eventCount }).map((_, index) => ({
-                    media: {
-                        url: document.getElementById(`event-media-url-${index}`).value,
-                        caption: document.getElementById(`event-media-caption-${index}`).value,
-                        credit: document.getElementById(`event-media-credit-${index}`).value
-                    },
-                    start_date: {
-                        year: document.getElementById(`event-start_date-year-${index}`).value
-                    },
-                    text: {
-                        headline: document.getElementById(`event-text-headline-${index}`).value,
-                        text: `<p>${document.getElementById(`event-text-content-${index}`).value}</p> <small><i>Fuente: <a href="${document.getElementById(`event-text-source-url-${index}`).value}" target="_blank">${document.getElementById(`event-text-source-text-${index}`).value}</a></i></small>`
-                    }
-                }))
-            };
+                start_date: {
+                    year: document.getElementById(`event-start_date-year-${index}`).value
+                },
+                text: {
+                    headline: document.getElementById(`event-text-headline-${index}`).value,
+                    text: `<p>${document.getElementById(`event-text-content-${index}`).value}</p> <small><i>Fuente: <a href="${document.getElementById(`event-text-source-url-${index}`).value}" target="_blank">${document.getElementById(`event-text-source-text-${index}`).value}</a></i></small>`,
+                    sourceUrl: document.getElementById(`event-text-source-url-${index}`).value,
+                    sourceText: document.getElementById(`event-text-source-text-${index}`).value
+                }
+            }));
+
             const jsonString = JSON.stringify(json, null, 2);
             document.getElementById('jsonOutput').textContent = jsonString;
         }
@@ -262,25 +327,12 @@
             }
 
             if (data.events) {
-                data.events.forEach((event, index) => {
-                    addEvent(); // Agrega un nuevo evento
-                    const eventDiv = document.getElementById(`event-${index}`);
-                    document.getElementById(`event-media-url-${index}`).value = event.media.url || '';
-                    document.getElementById(`event-media-caption-${index}`).value = event.media.caption || '';
-                    document.getElementById(`event-media-credit-${index}`).value = event.media.credit || '';
-                    document.getElementById(`event-start_date-year-${index}`).value = event.start_date.year || '';
-                    document.getElementById(`event-text-headline-${index}`).value = event.text.headline || '';
-
-                    // Extrae el contenido y la fuente del texto
-                    const textContent = event.text.text.match(/<p>(.*?)<\/p>/);
-                    const textSource = event.text.text.match(/<small><i>Fuente: <a href="(.*?)" target="_blank">(.*?)<\/a><\/i><\/small>/);
-
-                    document.getElementById(`event-text-content-${index}`).value = textContent ? textContent[1] : '';
-                    document.getElementById(`event-text-source-url-${index}`).value = textSource ? textSource[1] : '';
-                    document.getElementById(`event-text-source-text-${index}`).value = textSource ? textSource[2] : '';
-                });
+                json.events = data.events;
+                eventCount = data.events.length;
+                reloadEvents();
             }
         }
     </script>
 </body>
+
 </html>
