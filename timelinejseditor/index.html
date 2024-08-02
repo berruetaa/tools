@@ -154,25 +154,32 @@
 
         function removeEvent(index) {
             const eventDiv = document.getElementById(`event-${index}`);
-            eventDiv.parentNode.removeChild(eventDiv);
-            // Reordenar los índices de los eventos restantes
-            eventCount--;
+            if (eventDiv) {
+                eventDiv.remove();
+                // Reordenar los eventos restantes
+                reorderEvents();
+            }
+        }
+
+        function reorderEvents() {
             const eventsContainer = document.getElementById('events-container');
             const events = eventsContainer.getElementsByClassName('event-group');
-            for (let i = 0; i < events.length; i++) {
-                const event = events[i];
-                event.id = `event-${i}`;
+            let currentIndex = 0;
+            for (let event of events) {
+                event.id = `event-${currentIndex}`;
                 const inputs = event.getElementsByTagName('input');
-                for (let j = 0; j < inputs.length; j++) {
-                    inputs[j].id = inputs[j].id.replace(/\d+$/, i);
-                    inputs[j].name = inputs[j].name.replace(/\d+$/, i);
+                for (let input of inputs) {
+                    input.id = input.id.replace(/\d+$/, currentIndex);
+                    input.name = input.name.replace(/\d+$/, currentIndex);
                 }
                 const textareas = event.getElementsByTagName('textarea');
-                for (let j = 0; j < textareas.length; j++) {
-                    textareas[j].id = textareas[j].id.replace(/\d+$/, i);
-                    textareas[j].name = textareas[j].name.replace(/\d+$/, i);
+                for (let textarea of textareas) {
+                    textarea.id = textarea.id.replace(/\d+$/, currentIndex);
+                    textarea.name = textarea.name.replace(/\d+$/, currentIndex);
                 }
+                currentIndex++;
             }
+            eventCount = currentIndex;
         }
 
         function generateJSON() {
