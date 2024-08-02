@@ -153,34 +153,31 @@
         }
 
         function removeEvent(index) {
-            const eventDiv = document.getElementById(`event-${index}`);
-            if (eventDiv) {
-                eventDiv.remove();
-                // Reordenar los eventos restantes
-                reorderEvents();
-            }
-        }
+    const eventDiv = document.getElementById(`event-${index}`);
+    if (eventDiv) {
+        eventDiv.remove();
+        eventCount--; // Actualizar el contador de eventos
 
-        function reorderEvents() {
-            const eventsContainer = document.getElementById('events-container');
-            const events = eventsContainer.getElementsByClassName('event-group');
-            let currentIndex = 0;
-            for (let event of events) {
-                event.id = `event-${currentIndex}`;
-                const inputs = event.getElementsByTagName('input');
-                for (let input of inputs) {
-                    input.id = input.id.replace(/\d+$/, currentIndex);
-                    input.name = input.name.replace(/\d+$/, currentIndex);
-                }
-                const textareas = event.getElementsByTagName('textarea');
-                for (let textarea of textareas) {
-                    textarea.id = textarea.id.replace(/\d+$/, currentIndex);
-                    textarea.name = textarea.name.replace(/\d+$/, currentIndex);
-                }
-                currentIndex++;
+        // Reordenar los eventos restantes
+        const eventsContainer = document.getElementById('events-container');
+        const events = eventsContainer.getElementsByClassName('event-group');
+        for (let i = index; i < eventCount; i++) {
+            const currentEvent = events[i];
+            currentEvent.id = `event-${i}`;
+            const inputs = currentEvent.getElementsByTagName('input');
+            for (let input of inputs) {
+                input.id = input.id.replace(/\d+$/, i);
+                input.name = input.name.replace(/\d+$/, i);
             }
-            eventCount = currentIndex;
+            const textareas = currentEvent.getElementsByTagName('textarea');
+            for (let textarea of textareas) {
+                textarea.id = textarea.id.replace(/\d+$/, i);
+                textarea.name = textarea.name.replace(/\d+$/, i);
+            }
         }
+    }
+}
+
 
         function generateJSON() {
             const json = {
