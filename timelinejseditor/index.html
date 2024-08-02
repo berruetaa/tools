@@ -50,11 +50,18 @@
         .btn-container {
             margin-top: 20px;
         }
+        #fileInput {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Editor de JSON Complejo</h1>
+
+        <!-- Cargar JSON -->
+        <input type="file" id="fileInput" accept=".json" onchange="loadJSON(event)">
+
         <form id="jsonForm">
             <h2>Título</h2>
             <div class="field">
@@ -182,6 +189,51 @@
             }).catch(err => {
                 alert('Error al copiar al portapapeles: ' + err);
             });
+        }
+
+        function loadJSON(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const json = JSON.parse(e.target.result);
+                        populateForm(json);
+                    } catch (error) {
+                        alert('Error al parsear el JSON: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Por favor, seleccione un archivo JSON.');
+            }
+        }
+
+        function populateForm(json) {
+            document.getElementById('title-headline').value = json.title.text.headline;
+            document.getElementById('title-text').value = json.title.text.text.replace(/<\/?p>/g, '');
+
+            // Limpia los eventos existentes
+            document.getElementById('events-container').innerHTML = '';
+            eventCount = 0;
+
+            if (json.events) {
+                json.events.forEach((event, index) => {
+                    addEvent();
+                    document.getElementById(`event-media-url-${index}`).value = event.media.url || '';
+                    document.getElementById(`event-media-caption-${index}`).value = event.media.caption || '';
+                    document.getElementById(`event-media-credit-${index}`).value = event.media.credit || '';
+                    document.getElementById(`event-start_date-year-${index}`).value = event.start_date.year || '';
+                    document.getElementById(`event-text-headline-${index}`).value = event.text.headline || '';
+                    
+                    // Extrae el contenido y la fuente del texto
+                    const textContent = event.text.text.match(/<p>(.*?)<\/p>/);
+                    const textSource = event.text.text.match(/<small><i>Fuente: (.*?)<\/i><\/small>/);
+
+                    document.getElementById(`event-text-content-${index}`).value = textContent ? textContent[1] : '';
+                    document.getElementById(`event-text-source-${index}`).value = textSource ? textSource[1] : '';
+                });
+            }
         }
     </script>
 </body>
