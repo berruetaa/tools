@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de JSON Complejo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 120px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .event-group {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editor de JSON Complejo</h1>
+        <form id="jsonForm">
+            <h2>Título</h2>
+            <div class="field">
+                <label for="title-headline">Titular del Título</label>
+                <input type="text" id="title-headline" name="title-headline" value="">
+            </div>
+            <div class="field">
+                <label for="title-text">Texto del Título</label>
+                <textarea id="title-text" name="title-text"></textarea>
+            </div>
+
+            <h2>Eventos</h2>
+            <div id="events-container">
+                <!-- Eventos se agregarán aquí -->
+            </div>
+
+            <button type="button" onclick="generateJSON()">Generar JSON</button>
+        </form>
+
+        <h2>JSON Resultante</h2>
+        <pre id="jsonOutput"></pre>
+    </div>
+
+    <script>
+        const events = [];  // Puedes llenar esta lista con eventos si es necesario
+
+        function populateEvents() {
+            const container = document.getElementById('events-container');
+            container.innerHTML = '';
+            events.forEach((event, index) => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event-group');
+                eventDiv.innerHTML = `
+                    <h3>Evento ${index + 1}</h3>
+                    <div class="field">
+                        <label for="event-media-url-${index}">URL de la Imagen</label>
+                        <input type="text" id="event-media-url-${index}" name="event-media-url-${index}" value="${event.media ? event.media.url : ''}">
+                    </div>
+                    <div class="field">
+                        <label for="event-media-caption-${index}">Texto de la Imagen</label>
+                        <input type="text" id="event-media-caption-${index}" name="event-media-caption-${index}" value="${event.media ? event.media.caption : ''}">
+                    </div>
+                    <div class="field">
+                        <label for="event-media-credit-${index}">Crédito de la Imagen</label>
+                        <input type="text" id="event-media-credit-${index}" name="event-media-credit-${index}" value="${event.media ? event.media.credit : ''}">
+                    </div>
+                    <div class="field">
+                        <label for="event-start_date-year-${index}">Año de Inicio</label>
+                        <input type="text" id="event-start_date-year-${index}" name="event-start_date-year-${index}" value="${event.start_date ? event.start_date.year : ''}">
+                    </div>
+                    <div class="field">
+                        <label for="event-text-headline-${index}">Titular</label>
+                        <input type="text" id="event-text-headline-${index}" name="event-text-headline-${index}" value="${event.text ? event.text.headline : ''}">
+                    </div>
+                    <div class="field">
+                        <label for="event-text-text-${index}">Texto</label>
+                        <textarea id="event-text-text-${index}" name="event-text-text-${index}">${event.text ? event.text.text : ''}</textarea>
+                    </div>
+                `;
+                container.appendChild(eventDiv);
+            });
+        }
+
+        function generateJSON() {
+            const json = {
+                title: {
+                    media: {
+                        url: "",
+                        caption: "",
+                        credit: ""
+                    },
+                    text: {
+                        headline: document.getElementById('title-headline').value,
+                        text: document.getElementById('title-text').value
+                    }
+                },
+                events: events.map((_, index) => ({
+                    media: {
+                        url: document.getElementById(`event-media-url-${index}`).value,
+                        caption: document.getElementById(`event-media-caption-${index}`).value,
+                        credit: document.getElementById(`event-media-credit-${index}`).value
+                    },
+                    start_date: {
+                        year: document.getElementById(`event-start_date-year-${index}`).value
+                    },
+                    text: {
+                        headline: document.getElementById(`event-text-headline-${index}`).value,
+                        text: document.getElementById(`event-text-text-${index}`).value
+                    }
+                }))
+            };
+            document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
+        }
+
+        populateEvents();  // Inicializa el formulario si hay eventos en la lista
+    </script>
+</body>
+</html>
