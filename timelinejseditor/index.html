@@ -156,23 +156,32 @@
     const eventDiv = document.getElementById(`event-${index}`);
     if (eventDiv) {
         eventDiv.remove();
-        eventCount--; // Actualizar el contador de eventos
+
+        // Actualizar el contador de eventos
+        eventCount--;
 
         // Reordenar los eventos restantes
         const eventsContainer = document.getElementById('events-container');
-        const events = eventsContainer.getElementsByClassName('event-group');
-        for (let i = index; i < eventCount; i++) {
+        const events = Array.from(eventsContainer.children); // Convertir NodeList a array
+
+        // Iterar en orden inverso para mantener la indexación correcta
+        for (let i = events.length - 1; i >= index; i--) {
             const currentEvent = events[i];
-            currentEvent.id = `event-${i}`;
+            const newIndex = i - 1; // Nueva indexación después de eliminar
+
+            // Actualizar el ID del evento
+            currentEvent.id = `event-${newIndex}`;
+
+            // Actualizar los IDs y nombres de los inputs y textareas
             const inputs = currentEvent.getElementsByTagName('input');
             for (let input of inputs) {
-                input.id = input.id.replace(/\d+$/, i);
-                input.name = input.name.replace(/\d+$/, i);
+                input.id = input.id.replace(/\d+$/, newIndex);
+                input.name = input.name.replace(/\d+$/, newIndex);
             }
             const textareas = currentEvent.getElementsByTagName('textarea');
             for (let textarea of textareas) {
-                textarea.id = textarea.id.replace(/\d+$/, i);
-                textarea.name = textarea.name.replace(/\d+$/, i);
+                textarea.id = textarea.id.replace(/\d+$/, newIndex);
+                textarea.name = textarea.name.replace(/\d+$/, newIndex);
             }
         }
     }
